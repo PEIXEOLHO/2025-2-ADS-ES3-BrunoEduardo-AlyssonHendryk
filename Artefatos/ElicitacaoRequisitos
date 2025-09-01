@@ -1,0 +1,38 @@
+# Requisitos Funcionais (o que o sistema deve fazer)
+
+- Rastreabilidade completa
+  Permitir o rastreamento em tempo real de entregadores desde a origem até o destino final.
+
+- Gestão de estoque e armazéns
+  Controlar entrada, saída e movimentação de produtos em galpões e distribuidoras.
+
+- Monitoramento logístico
+  Exibir status de transporte, localização de cargas e previsão de entrega.
+
+- Controle de qualidade e conformidade
+  Registrar informações sobre condições de armazenagem (validade).
+
+- Relatórios e dashboards inteligentes
+  Gerar relatórios de desempenho logístico, eficiência operacional e indicadores de rastreabilidade.
+
+- Alertas automáticos
+  Enviar notificações sobre atrasos, desvios de rota ou inconsistências nos dados.
+
+- Integração com clientes e parceiros
+  Possibilitar acesso seguro às informações para fornecedores, distribuidores.
+
+# Requisitos Não Funcionais (como o sistema deve ser)
+
+- Eficiência – Processar grandes volumes de dados em tempo real.
+
+- Precisão – Garantir consistência e confiabilidade das informações.
+
+- Segurança – Implementar controle de acesso e criptografia de dados.
+
+- Escalabilidade – Suportar expansão para novos produtos além das farinhas.
+
+- Usabilidade – Interface intuitiva, adaptada para desktop e dispositivos móveis.
+
+- Disponibilidade – Sistema acessível 24/7 com redundância em caso de falhas.
+
+- Confiabilidade – Garantir baixa taxa de erro e alta taxa de sucesso nas operações.

@@ -1,0 +1,51 @@
+--Utilização de plantUML para criação dos Diagramas--
+Editor online: https://www.plantuml.com/plantuml
+--Snippet do código--
+
+--Diagrama de atividade--
+@startuml
+title Fluxo Simplificado do Pedido LMD
+
+start
+:Pedido Recebido;
+:Registrar Pedido e Estoque;
+
+:Verificar Saldo/Estoque Crítico?;
+if (Estoque Suficiente?) then (sim)
+    :Reservar Quantidade para o Pedido;
+    :Encaminhar para Separação;
+else (não)
+    :Gerar Alerta de Compra;
+    :Registrar Pedido Pendente;
+    stop
+endif
+
+:Separar Produtos no Armazém (QR Code);
+:Conferência Final do Pedido?;
+
+if (Pedido Conferido OK?) then (sim)
+    :Marcar Pedido como "Pronto para Envio";
+    :Carregar no Veículo;
+    :Planejar Rota (GPS/Leaflet Maps);
+else (não)
+    :Notificar Admin sobre Falha na Separação;
+    stop
+endif
+
+:Início do Percurso para Entregas;
+:Entregador se dirige ao endereço;
+
+:Entrega Concluída?;
+if (Sim, Recebimento Confirmado) then (sim)
+    :Registrar Histórico de Sucesso;
+    :Atualizar Sistema para "Concluído";
+    stop
+else (não)
+    :Notificar Admin sobre Falha na Entrega;
+    :Registrar Falha no Histórico;
+    :Tentar entrega novamente;
+    stop
+endif
+
+
+@enduml

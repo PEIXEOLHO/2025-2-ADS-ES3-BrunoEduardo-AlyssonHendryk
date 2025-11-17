@@ -1,8 +1,8 @@
---Utilização de plantUML para criação dos Diagramas--
+-----------------Utilização de plantUML para criação dos Diagramas----------------------------------------------------------------------
 Editor online: https://www.plantuml.com/plantuml
---Snippet do código--
+-----------------------------------------------------------Snippet do código------------------------------------------------------------
 
---Diagrama de atividade--
+-----------------------------------------------------------Diagrama de atividade--------------------------------------------------------
 @startuml
 title Fluxo Simplificado do Pedido LMD
 
@@ -49,3 +49,124 @@ endif
 
 
 @enduml
+
+-----------------------------------------------------------Diagrama de caso de uso--------------------------------------------------------
+@startuml
+title Diagrama de Caso de Uso - LMD (Logística Modus Destinatio)
+
+!theme plain
+left to right direction
+
+actor Administrador
+actor Funcionário
+actor Entregador
+
+rectangle "Sistema LMD" {
+    usecase "Autenticar no Sistema" as UC_Login
+    
+    package "Gestão de Pedidos" {
+        usecase "Listar Pedidos" as UC_Listar
+        usecase "Adicionar Produto/Pedido" as UC_Adicionar
+        usecase "Realizar Separação (QR Code)" as UC_Separar
+        usecase "Visualizar Calendário de Pedidos" as UC_Calendario
+    }
+    
+    package "Logística e Rastreamento" {
+        usecase "Visualizar Mapa (Entregador)" as UC_Mapa_Ent
+        usecase "Consultar Melhor Rota" as UC_Rota
+        usecase "Visualizar 'Killfeed' (Admin)" as UC_Killfeed
+        usecase "Rastrear Veículos (Tempo Real)" as UC_GPS_Track
+    }
+
+    package "Estoque" {
+        usecase "Gerenciar Organização de Estoque" as UC_Estoque
+        usecase "Controlar via QR Code" as UC_QR_Estoque
+    }
+    
+    package "Administração" {
+        usecase "Acesso Total / Editar Informações" as UC_Acesso_Total
+        usecase "Gerenciar Tarefas (Funcionário)" as UC_Tarefas
+        usecase "Acessar Infos Financeiras" as UC_Financeiro
+    }
+}
+
+actor "(GPS / API de Mapas)" as GIS
+actor "(Leitor QR Code)" as QRCode
+
+' Atores e suas UCs
+Administrador -- UC_Login
+Funcionário -- UC_Login
+Entregador -- UC_Login
+
+' Funcionário
+Funcionário -- UC_Calendario
+Funcionário -- UC_Listar
+Funcionário -- UC_Estoque
+Funcionário -- UC_Separar
+Funcionário -- UC_Tarefas
+
+' Entregador
+Entregador -- UC_Adicionar
+Entregador -- UC_Mapa_Ent
+Entregador -- UC_Rota
+
+' Administrador
+Administrador -- UC_Adicionar
+Administrador -- UC_Killfeed
+Administrador -- UC_Acesso_Total
+Administrador -- UC_Tarefas
+Administrador -- UC_Financeiro
+
+' Relações com Sistemas Externos
+UC_Separar ..> QRCode : (usa)
+UC_QR_Estoque ..> QRCode : (usa)
+UC_Mapa_Ent ..> GIS : (usa)
+UC_Rota ..> GIS : (usa)
+UC_Killfeed ..> GIS : (usa)
+UC_GPS_Track ..> GIS : (usa)
+
+' Relações de Inclusão/Extensão
+UC_Listar ..> UC_Login : (include)
+UC_Estoque ..> UC_Login : (include)
+UC_Mapa_Ent ..> UC_Login : (include)
+UC_Acesso_Total ..> UC_Login : (include)
+UC_Killfeed -- UC_GPS_Track : (include)
+UC_Mapa_Ent -- UC_GPS_Track : (include)
+@enduml
+
+-----------------------------------------------------------Diagrama de máquina de estados--------------------------------------------------------
+@startuml
+title Diagrama de Estado - Ciclo de Vida do Pedido LMD
+
+!theme plain
+state "Pendente" as Pendente
+state "Reservado" as Reservado
+state "Em Separação" as EmSeparacao
+state "Pronto para Envio" as ProntoEnvio
+state "Em Trânsito" as EmTransito
+state "Concluído" as Concluido
+state "Falha na Entrega" as FalhaEntrega
+
+[*] --> Pendente : Pedido Criado
+Pendente --> Reservado : Estoque Verificado (OK)
+Pendente --> [*] : Pedido Cancelado
+
+Reservado --> EmSeparacao : Iniciar Separação
+Reservado --> [*] : Pedido Cancelado
+
+EmSeparacao --> ProntoEnvio : Separação Concluída (QR) 
+EmSeparacao --> Pendente : Falha na Separação (Falta)
+EmSeparacao --> [*] : Pedido Cancelado
+
+ProntoEnvio --> EmTransito : Carregar Veículo / Iniciar Rota
+
+EmTransito --> Concluido : Entrega Confirmada
+EmTransito --> FalhaEntrega : Falha na Entrega (Cliente Ausente)
+
+FalhaEntrega --> EmTransito : Retentar Entrega
+FalhaEntrega --> ProntoEnvio : Retornar ao Armazém
+
+Concluido --> [*]
+@enduml
+
+-----------------------------------------------------------Diagrama de sequência----------------------------------------------------------------

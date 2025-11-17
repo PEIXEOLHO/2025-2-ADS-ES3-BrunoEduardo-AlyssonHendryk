@@ -170,3 +170,43 @@ Concluido --> [*]
 @enduml
 
 -----------------------------------------------------------Diagrama de sequência----------------------------------------------------------------
+@startuml
+title Diagrama de Sequência - Rastreamento em Tempo Real (Killfeed)
+
+!theme plain
+autonumber
+
+actor Entregador
+boundary "Sistema LMD (App)" as App
+control "Módulo Rastreamento" as Modulo
+database "Banco de Dados" as BD
+actor Administrador
+boundary "Interface Admin (Killfeed)" as Killfeed
+participant "(API de Mapas)" as GIS
+
+activate Entregador
+activate App
+
+Entregador -> App : Abre App e Inicia Rota
+App -> Modulo : Enviar Posição GPS (Loop a cada X seg)
+activate Modulo
+
+Modulo -> BD : Salvar Localização(id_entregador, lat, lon)
+activate BD
+BD --> Modulo : Localização Salva
+deactivate BD
+
+Modulo -> Killfeed : Atualização em Tempo Real(id_entregador, lat, lon)
+activate Killfeed
+Administrador -> Killfeed : Visualiza "Killfeed" 
+
+Killfeed -> GIS :Exigir informações do mapa(lat, lon)
+activate GIS
+GIS --> Killfeed : Retorna Imagem do Mapa
+deactivate GIS
+
+Killfeed --> Administrador : Exibe Ponto no Mapa (Atualizado)
+deactivate Killfeed
+deactivate Modulo
+deactivate App
+@enduml

@@ -1,5 +1,7 @@
 -----------------Utilização de plantUML para criação dos Diagramas----------------------------------------------------------------------
 Editor online: https://www.plantuml.com/plantuml
+o plant uml tem alguns compenentes visuais um pouco confusos, para representar herenças, ele escolhe dar para cada entidade "filha" duas setas com um triângulo
+branco que apontam para a entidade "mãe", detalhe apenas visual, compõe apenas uma relação
 -----------------------------------------------------------Snippet do código------------------------------------------------------------
 
 -----------------------------------------------------------Diagrama de atividade--------------------------------------------------------
@@ -209,4 +211,110 @@ Killfeed --> Administrador : Exibe Ponto no Mapa (Atualizado)
 deactivate Killfeed
 deactivate Modulo
 deactivate App
+@enduml
+-----------------------------------------------------------Diagrama de classe----------------------------------------------------------------
+@startuml
+title Diagrama de Classe - LMD (Logística Modus Destinatio)
+
+!theme plain
+
+' --- Classes Principais ---
+
+abstract class Usuario {
+  +id_usuario: int
+  +nome: String
+  #senha_hash: String
+  +perfil: String
+  --
+  +login(): boolean
+  +logout(): void
+}
+
+class Administrador extends Usuario {
+  --
+  +gerenciarUsuarios(): void
+  +acessarRelatoriosFinanceiros(): void
+  +visualizarKillfeed(): void
+  +gerenciarTarefas(): void
+}
+
+class Funcionario extends Usuario {
+  --
+  +visualizarCalendario(): void
+  +listarPedidos(): void
+  +gerenciarEstoque(): void
+  +separarPedido(id_pedido): void
+}
+
+class Entregador extends Usuario {
+  --
+  +visualizarMapa(): void
+  +consultarRota(): void
+  +adicionarProduto(id_pedido): void
+  +atualizarLocalizacaoGPS(): void
+}
+
+class Pedido {
+  +id_pedido: int
+  +data_criacao: Date
+  +status: String
+  +endereco_entrega: String
+  +valor_total: float
+  --
+  +atualizarStatus(novo_status): void
+}
+
+class Produto {
+  +id_produto: int
+  +nome: String
+  +descricao: String
+  +valor: float
+  --
+  +validarEstoque(qtde): boolean
+}
+
+' Classe de associação para o relacionamento N-N entre Pedido e Produto
+class ItemPedido {
+  +quantidade: int
+  +valor_unitario: float
+}
+
+class Estoque {
+  +id_estoque: int
+  #valor_total_estimado: float
+  --
+  +movimentarEstoque(id_produto, qtde): void
+  +controlarPorQRCode(id_produto): void
+  +getValorTotalEstoque(): float
+}
+
+class Entrega {
+  +id_entrega: int
+  +status: String
+  +rota_planejada: String
+  +localizacao_atual_gps: String
+  --
+  +iniciarEntrega(): void
+  +concluirEntrega(): void
+}
+
+' --- Relacionamentos ---
+
+' Herança
+Usuario <|-- Administrador
+Usuario <|-- Funcionario
+Usuario <|-- Entregador
+
+' Associações
+Funcionario "1" -- "0..*" Pedido : (Gerencia)
+Administrador "1" -- "1" Estoque : (Acessa valor)
+Funcionario "1" -- "1" Estoque : (Gerencia)
+
+Pedido "1" -- "1..*" ItemPedido : (Contém)
+Produto "1" -- "1..*" ItemPedido : (Compõe)
+
+Estoque "1" -- "0..*" Produto : (Armazena)
+
+Pedido "1" -- "1" Entrega : (Resulta em)
+Entregador "1" -- "0..*" Entrega : (Realiza)
 @enduml
